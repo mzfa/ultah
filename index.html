@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Untuk Kamu, Sayangku</title>
+<meta name="theme-color" content="#fbf3ec">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+  :root {
+    --bg: #fbf3ec;
+    --card: #fffaf6;
+    --ink: #3b2a2f;
+    --muted: #8a7176;
+    --rose: #d9576f;
+    --rose-soft: #f6d3d9;
+    --gold: #c99a4a;
+    --line: #ecdcd2;
+    --shadow: 0 10px 30px rgba(120, 60, 70, .12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Nunito", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; line-height: 1.2; }
+  h2 { font-size: clamp(1.6rem, 6vw, 2.2rem); text-align: center; margin-bottom: .4rem; }
+  .sub { text-align: center; color: var(--muted); margin-bottom: 2rem; }
+  section { padding: 4.5rem 16px; max-width: 720px; margin: 0 auto; }
+  button { font: inherit; cursor: pointer; border: 0; }
+  .btn {
+    background: var(--rose); color: #fff; padding: .85rem 1.6rem; border-radius: 999px;
+    font-weight: 700; box-shadow: var(--shadow); transition: transform .15s;
+  }
+  .btn:active { transform: scale(.96); }
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s, transform .8s; }
+  .reveal.show { opacity: 1; transform: none; }
+
+  /* Intro amplop */
+  #intro {
+    position: fixed; inset: 0; z-index: 50; background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;
+    padding: 16px; text-align: center; transition: opacity .8s, visibility .8s;
+  }
+  #intro.gone { opacity: 0; visibility: hidden; }
+  #intro p { color: var(--muted); }
+  .envelope { position: relative; width: min(280px, 80vw); aspect-ratio: 3/2; cursor: pointer; animation: bob 2.4s ease-in-out infinite; }
+  .envelope .body { position: absolute; inset: 0; background: #f2c9cf; border-radius: 10px; box-shadow: var(--shadow); }
+  .envelope .flap {
+    position: absolute; inset: 0 0 auto 0; height: 60%; background: #e8a9b3;
+    clip-path: polygon(0 0, 100% 0, 50% 100%); transform-origin: top; transition: transform .6s; z-index: 2;
+    border-radius: 10px 10px 0 0;
+  }
+  .envelope .seal {
+    position: absolute; left: 50%; top: 52%; translate: -50% -50%; z-index: 3;
+    width: 52px; height: 52px; border-radius: 50%; background: var(--rose); color: #fff;
+    display: grid; place-items: center; font-size: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,.15);
+  }
+  .envelope.open .flap { transform: rotateX(180deg); }
+  .envelope.open .seal { opacity: 0; transition: opacity .3s; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+
+  /* Hero */
+  #hero { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 1rem; }
+  #hero .kicker { color: var(--rose); font-weight: 700; letter-spacing: .15em; text-transform: uppercase; font-size: .8rem; }
+  #hero h1 { font-size: clamp(2.2rem, 10vw, 4rem); }
+  #hero h1 em { color: var(--rose); font-style: italic; font-weight: 400; }
+  .counter { display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-top: 1rem; }
+  .counter div { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: .7rem .9rem; min-width: 76px; }
+  .counter b { display: block; font-family: "Fraunces", serif; font-size: 1.6rem; color: var(--rose); }
+  .counter span { font-size: .75rem; color: var(--muted); }
+  .scroll-hint { margin-top: 2rem; color: var(--muted); font-size: .85rem; animation: bob 2s infinite; }
+
+  /* Surat */
+  .letter {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.6rem 1.3rem;
+    box-shadow: var(--shadow); font-family: "Fraunces", serif; font-size: 1.05rem; min-height: 14rem; white-space: pre-line;
+  }
+  .letter .caret { display: inline-block; width: 2px; height: 1.1em; background: var(--rose); vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Kartu alasan */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .8rem; }
+  .card { perspective: 800px; aspect-ratio: 1; background: none; }
+  .card-inner { position: relative; width: 100%; height: 100%; transition: transform .6s; transform-style: preserve-3d; }
+  .card.flipped .card-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px; padding: 1rem;
+    display: grid; place-items: center; text-align: center; box-shadow: var(--shadow);
+  }
+  .front { background: var(--rose-soft); color: var(--rose); font-family: "Fraunces", serif; font-size: 2.2rem; }
+  .front small { display: block; font-family: "Nunito"; font-size: .75rem; color: var(--muted); }
+  .back { background: var(--card); border: 1px solid var(--line); transform: rotateY(180deg); font-size: .95rem; color: var(--ink); }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 1.6rem; }
+  .timeline::before { content: ""; position: absolute; left: 6px; top: 0; bottom: 0; width: 2px; background: var(--line); }
+  .moment { position: relative; margin-bottom: 1.8rem; }
+  .moment::before {
+    content: ""; position: absolute; left: -1.6rem; top: .35rem; width: 14px; height: 14px;
+    border-radius: 50%; background: var(--rose); border: 3px solid var(--bg);
+  }
+  .moment time { color: var(--rose); font-weight: 700; font-size: .85rem; }
+  .moment h3 { font-size: 1.2rem; margin: .1rem 0 .3rem; }
+  .moment p { color: var(--muted); }
+  .moment img, .moment video { width: 100%; border-radius: 14px; margin-top: .7rem; box-shadow: var(--shadow); display: block; }
+
+  /* Untuk Bunda */
+  .bunda {
+    background: linear-gradient(160deg, #fde7d8, #f9d6dc); border-radius: 22px; padding: 2rem 1.4rem; text-align: center;
+  }
+  .bunda .big { font-size: 3rem; }
+  .bunda p { font-family: "Fraunces", serif; font-size: 1.15rem; font-style: italic; margin-top: .8rem; }
+
+  /* Kue */
+  .cake-wrap { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+  .cake { position: relative; width: 240px; height: 200px; }
+  .tier { position: absolute; left: 50%; translate: -50% 0; border-radius: 12px; }
+  .tier.t1 { bottom: 0; width: 240px; height: 80px; background: #e8a9b3; }
+  .tier.t2 { bottom: 76px; width: 180px; height: 64px; background: #f6d3d9; }
+  .tier::after { content: ""; position: absolute; inset: 0 0 auto 0; height: 14px; background: #fff; border-radius: 12px 12px 8px 8px; }
+  .candles { position: absolute; bottom: 140px; left: 50%; translate: -50% 0; display: flex; gap: 22px; }
+  .candle { position: relative; width: 12px; height: 46px; background: repeating-linear-gradient(45deg, #fff 0 5px, var(--rose) 5px 10px); border-radius: 3px; padding: 0; }
+  .candle::before { content: ""; position: absolute; inset: -30px -16px 0; } /* area sentuh lebih besar */
+  .flame {
+    position: absolute; left: 50%; bottom: 100%; translate: -50% 0; width: 14px; height: 22px;
+    background: radial-gradient(circle at 50% 70%, #fff6c2, #ffb347 60%, transparent 70%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: flick .3s infinite alternate; transition: opacity .3s;
+  }
+  .candle.out .flame { opacity: 0; }
+  @keyframes flick { to { transform: scale(1.1, .9) rotate(3deg); } }
+  #wish { text-align: center; font-family: "Fraunces", serif; font-size: 1.2rem; min-height: 3rem; }
+  #wish.done { color: var(--rose); }
+
+  footer { text-align: center; color: var(--muted); padding: 2rem 16px 3rem; font-size: .9rem; }
+
+  /* Hati melayang */
+  .float-heart { position: fixed; pointer-events: none; z-index: 40; font-size: 1.4rem; animation: up 1.6s ease-out forwards; }
+  @keyframes up { to { transform: translateY(-120px) scale(1.4); opacity: 0; } }
+
+  #music { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 30; width: 46px; height: 46px; border-radius: 50%; background: var(--card); box-shadow: var(--shadow); font-size: 1.2rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     UBAH BAGIAN INI SAJA — semua teks & foto diatur dari CONFIG
+     di <script> paling bawah.
+     ============================================================ -->
+
+<div id="intro">
+  <p id="intro-for"></p>
+  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Buka surat">
+    <div class="body"></div><div class="flap"></div><div class="seal">♥</div>
+  </div>
+  <p>Ketuk amplopnya ya…</p>
+</div>
+
+<main>
+  <section id="hero">
+    <div class="kicker reveal">Untuk istriku tercinta</div>
+    <h1 class="reveal">Selamat Ulang Tahun,<br><em id="hero-name"></em></h1>
+    <p class="reveal" style="color:var(--muted)">Sudah bersama selama</p>
+    <div class="counter reveal" id="counter"></div>
+    <div class="scroll-hint">geser ke bawah ↓</div>
+  </section>
+
+  <section id="surat">
+    <h2 class="reveal">Sepucuk Surat</h2>
+    <p class="sub reveal">dari aku, untuk kamu</p>
+    <div class="letter reveal" id="letter"><span class="caret"></span></div>
+  </section>
+
+  <section id="alasan">
+    <h2 class="reveal">Alasan Aku Sayang Kamu</h2>
+    <p class="sub reveal">ketuk tiap kartu</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section id="perjalanan">
+    <h2 class="reveal">Perjalanan Kita</h2>
+    <p class="sub reveal">dari awal sampai sekarang</p>
+    <div class="timeline" id="timeline"></div>
+  </section>
+
+  <section id="bunda">
+    <div class="bunda reveal">
+      <div class="big">👶🤍</div>
+      <h2 id="bunda-title"></h2>
+      <p id="bunda-msg"></p>
+    </div>
+  </section>
+
+  <section id="kue">
+    <h2 class="reveal">Tiup Lilinnya</h2>
+    <p class="sub reveal">ketuk tiap lilin, jangan lupa make a wish</p>
+    <div class="cake-wrap reveal">
+      <div class="cake">
+        <div class="candles" id="candles"></div>
+        <div class="tier t2"></div>
+        <div class="tier t1"></div>
+      </div>
+      <div id="wish">🕯️🕯️🕯️</div>
+    </div>
+  </section>
+</main>
+
+<footer id="footer"></footer>
+<button id="music" hidden aria-label="Musik">🎵</button>
+<audio id="audio" loop></audio>
+
+<script>
+const CONFIG = {
+  namaIstri: "Istriku Tercinta",               // nama / panggilan istri
+  namaPengirim: "Muhammad Zulfikar F A",             // nama kamu
+  tanggalBersama: "2025-02-28",        // tanggal menikah / jadian (YYYY-MM-DD)
+  musik: "",                           // contoh: "musik.mp3" (taruh file di folder yang sama). Kosongkan jika tidak pakai.
+
+  surat: `Sayang,
+
+Selamat ulang tahun. Terima kasih sudah jadi istri yang sabar, teman hidupku walaupun kadang rewel dan ngeselin, dan ibu yang luar biasa untuk anak kita.
+
+Setiap hari bersamamu adalah hadiah. Semoga tahun ini kamu makin bahagia, sehat, dan selalu dikelilingi cinta.
+
+Aku sayang kamu, hari ini dan seterusnya.`,
+
+  alasan: [
+    "Senyummu yang bikin capekku hilang",
+    "Kesabaranmu menghadapi aku",
+    "Caramu mengurus anak kita",
+    "Masakanmu yang paling enak sedunia (iyaa ga yahhhh)",
+    "Kamu selalu percaya sama aku (kadang kadang)",
+    "Tawamu yang menular",
+  ],
+
+  // foto opsional: taruh file di folder "foto/" lalu isi misal "foto/1.jpg"
+  // video opsional: tambah video: "video/1.mp4" (format .mp4, maks ~25 MB per file)
+  perjalanan: [
+    { tanggal: "2014", judul: "Pertama Bertemu", cerita: "Hari di mana semuanya dimulai.", foto: "",video: "vid1.mp4" },
+    { tanggal: "2025", judul: "Hari Pernikahan", cerita: "Kita berjanji untuk selamanya.", foto: "nikah.jpeg" },
+    { tanggal: "2026", judul: "Si Kecil Lahir", cerita: "Kamu resmi jadi ibu terhebat.", foto: "anak1.jpeg" },
+    { tanggal: "Hari ini", judul: "Ulang Tahunmu", cerita: "Dan aku masih jatuh cinta setiap hari.", foto: "" },
+  ],
+
+  bundaJudul: "Untuk Ibu Anak Kita Tercinta",
+  bundaPesan: "Terima kasih Ibuu sudah menjaga dan menyayangi anak kita setiap hari. Selamat ulang tahun, Ibuu! Aku sayang Ibuu.",
+
+  jumlahLilin: 3,
+  ucapanAkhir: "Semoga semua doamu terkabul. Selamat ulang tahun, cintaku ♥",
+};
+
+// ---------- isi konten ----------
+const $ = s => document.querySelector(s);
+$("#intro-for").textContent = `Untuk ${CONFIG.namaIstri}`;
+$("#hero-name").textContent = CONFIG.namaIstri;
+$("#bunda-title").textContent = CONFIG.bundaJudul;
+$("#bunda-msg").textContent = `“${CONFIG.bundaPesan}”`;
+$("#footer").textContent = `Dibuat dengan cinta oleh ${CONFIG.namaPengirim} ♥`;
+
+CONFIG.alasan.forEach((teks, i) => {
+  const b = document.createElement("button");
+  b.className = "card reveal";
+  b.innerHTML = `<div class="card-inner"><div class="face front"><div>${i + 1}<small>ketuk</small></div></div><div class="face back"></div></div>`;
+  b.querySelector(".back").textContent = teks;
+  b.onclick = e => { b.classList.toggle("flipped"); heart(e.clientX, e.clientY); };
+  $("#cards").append(b);
+});
+
+CONFIG.perjalanan.forEach(m => {
+  const d = document.createElement("div");
+  d.className = "moment reveal";
+  d.innerHTML = `<time></time><h3></h3><p></p>`;
+  d.querySelector("time").textContent = m.tanggal;
+  d.querySelector("h3").textContent = m.judul;
+  d.querySelector("p").textContent = m.cerita;
+  if (m.foto) {
+    const img = new Image();
+    img.src = m.foto; img.alt = m.judul; img.loading = "lazy";
+    d.append(img);
+  }
+  if (m.video) {
+    const v = document.createElement("video");
+    v.src = m.video; v.controls = true; v.playsInline = true; v.preload = "metadata";
+    d.append(v);
+  }
+  $("#timeline").append(d);
+});
+
+// ---------- penghitung hari ----------
+function tick() {
+  let ms = Date.now() - new Date(CONFIG.tanggalBersama + "T00:00:00");
+  const hari = Math.floor(ms / 864e5); ms %= 864e5;
+  const jam = Math.floor(ms / 36e5); ms %= 36e5;
+  const menit = Math.floor(ms / 6e4);
+  const detik = Math.floor(ms % 6e4 / 1e3);
+  $("#counter").innerHTML = [[hari, "hari"], [jam, "jam"], [menit, "menit"], [detik, "detik"]]
+    .map(([n, l]) => `<div><b>${n.toLocaleString("id-ID")}</b><span>${l}</span></div>`).join("");
+}
+tick(); setInterval(tick, 1000);
+
+// ---------- animasi muncul saat scroll ----------
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add("show");
+  io.unobserve(e.target);
+  if (e.target.id === "letter") typeLetter();
+}), { threshold: .2 });
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+// ---------- surat diketik ----------
+function typeLetter() {
+  const el = $("#letter"), caret = el.querySelector(".caret"), text = CONFIG.surat;
+  let i = 0;
+  (function step() {
+    if (i >= text.length) return caret.remove();
+    caret.before(text[i++]);
+    setTimeout(step, text[i - 1] === "\n" ? 250 : 35);
+  })();
+}
+
+// ---------- hati saat ketuk ----------
+function heart(x, y) {
+  const h = document.createElement("div");
+  h.className = "float-heart";
+  h.textContent = ["♥", "💕", "💗", "🌸"][Math.floor(Math.random() * 4)];
+  h.style.left = x - 10 + "px"; h.style.top = y - 10 + "px";
+  document.body.append(h);
+  setTimeout(() => h.remove(), 1600);
+}
+document.addEventListener("pointerdown", e => { if (e.target.closest("main")) heart(e.clientX, e.clientY); });
+
+// ---------- musik ----------
+const audio = $("#audio"), musicBtn = $("#music");
+if (CONFIG.musik) {
+  audio.src = CONFIG.musik;
+  musicBtn.hidden = false;
+  musicBtn.onclick = () => audio.paused ? audio.play() : audio.pause();
+  audio.onplay = () => musicBtn.textContent = "🎵";
+  audio.onpause = () => musicBtn.textContent = "🔇";
+}
+
+// ---------- buka amplop ----------
+function openEnvelope() {
+  $("#envelope").classList.add("open");
+  if (CONFIG.musik) audio.play().catch(() => {});
+  setTimeout(() => {
+    $("#intro").classList.add("gone");
+    burst();
+  }, 700);
+}
+$("#envelope").onclick = openEnvelope;
+$("#envelope").onkeydown = e => (e.key === "Enter" || e.key === " ") && openEnvelope();
+
+// ---------- lilin ----------
+let sisa = CONFIG.jumlahLilin;
+for (let i = 0; i < CONFIG.jumlahLilin; i++) {
+  const c = document.createElement("button");
+  c.className = "candle";
+  c.setAttribute("aria-label", "Tiup lilin");
+  c.innerHTML = `<span class="flame"></span>`;
+  c.onclick = () => {
+    if (c.classList.contains("out")) return;
+    c.classList.add("out");
+    $("#wish").textContent = --sisa ? "🕯️".repeat(sisa) : CONFIG.ucapanAkhir;
+    if (!sisa) { $("#wish").classList.add("done"); burst(); setTimeout(burst, 600); }
+  };
+  $("#candles").append(c);
+}
+
+function burst() {
+  if (window.confetti) confetti({ particleCount: 140, spread: 90, origin: { y: .6 }, colors: ["#d9576f", "#f6d3d9", "#c99a4a", "#ffffff"] });
+}
+</script>
+</body>
+</html>
